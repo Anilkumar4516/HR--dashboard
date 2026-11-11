@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/powerbi/deployment-config/v1",
+  "project": "Multi-Domain Analytics Suite (HR & Supply Chain)",
+  "version": "1.0.0",
+  "environments": {
+    "DEV": {
+      "workspaceName": "[DEV] Multi-Domain Analytics",
+      "refresh": {
+        "enabled": true,
+        "frequency": "Daily",
+        "timeSlotsUtc": ["06:00"],
+        "notificationOption": "MailOnFailure",
+        "notificationRecipients": ["bi-dev-team@company.com"]
+      },
+      "parameters": {
+        "DataFolderPath": "C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\",
+        "EnvironmentTag": "Development"
+      }
+    },
+    "TEST": {
+      "workspaceName": "[TEST] Multi-Domain Analytics",
+      "refresh": {
+        "enabled": true,
+        "frequency": "Daily",
+        "timeSlotsUtc": ["06:00", "12:00"],
+        "notificationOption": "MailOnFailure",
+        "notificationRecipients": ["bi-qa-lead@company.com"]
+      },
+      "parameters": {
+        "DataFolderPath": "C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\",
+        "EnvironmentTag": "UAT"
+      }
+    },
+    "PROD": {
+      "workspaceName": "[PROD] Multi-Domain Analytics",
+      "refresh": {
+        "enabled": true,
+        "frequency": "Daily",
+        "timeSlotsUtc": ["05:00", "11:00", "17:00", "23:00"],
+        "notificationOption": "MailOnFailure",
+        "notificationRecipients": [
+          "bi-ops-alerts@company.com",
+          "hr-analytics-lead@company.com",
+          "supplychain-director@company.com"
+        ]
+      },
+      "parameters": {
+        "DataFolderPath": "https://corporate.sharepoint.com/teams/EnterpriseBI/DataLake/Production/",
+        "EnvironmentTag": "Production"
+      }
+    }
+  },
+  "gateway": {
+    "requiredForLocalFiles": true,
+    "clusterName": "Corporate-OnPrem-Gateway-Cluster-01",
+    "supportedDataSources": [
+      {
+        "type": "File",
+        "connectionPath": "C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\"
+      }
+    ]
+  }
+}
+

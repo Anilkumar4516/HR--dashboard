@@ -1,0 +1,111 @@
+// ===============================================================================
+// DAX MEASURES REPOSITORY: TIME INTELLIGENCE & CALENDAR TEMPLATE
+// Author: Power BI Solution Architecture
+// ===============================================================================
+
+// -------------------------------------------------------------------------------
+// 1. RECRUITMENT TIME INTELLIGENCE
+// -------------------------------------------------------------------------------
+
+Applications MTD = 
+CALCULATE(
+    [Total Applications],
+    DATESMTD('Dim_Date'[Date])
+)
+
+Applications QTD = 
+CALCULATE(
+    [Total Applications],
+    DATESQTD('Dim_Date'[Date])
+)
+
+Applications YTD = 
+CALCULATE(
+    [Total Applications],
+    DATESYTD('Dim_Date'[Date])
+)
+
+Applications Prior Month = 
+CALCULATE(
+    [Total Applications],
+    DATEADD('Dim_Date'[Date], -1, MONTH)
+)
+
+Applications MoM Change % = 
+VAR CurrentVal = [Total Applications]
+VAR PriorVal = [Applications Prior Month]
+RETURN
+    IF(
+        NOT(ISBLANK(PriorVal)) && PriorVal > 0,
+        DIVIDE(CurrentVal - PriorVal, PriorVal, 0),
+        BLANK()
+    )
+
+
+// -------------------------------------------------------------------------------
+// 2. SUPPLY CHAIN PROCUREMENT SPEND TIME INTELLIGENCE
+// -------------------------------------------------------------------------------
+
+Procurement Spend MTD = 
+CALCULATE(
+    [Total Procurement Spend USD],
+    DATESMTD('Dim_Date'[Date])
+)
+
+Procurement Spend QTD = 
+CALCULATE(
+    [Total Procurement Spend USD],
+    DATESQTD('Dim_Date'[Date])
+)
+
+Procurement Spend YTD = 
+CALCULATE(
+    [Total Procurement Spend USD],
+    DATESYTD('Dim_Date'[Date])
+)
+
+Procurement Spend Prior Month = 
+CALCULATE(
+    [Total Procurement Spend USD],
+    DATEADD('Dim_Date'[Date], -1, MONTH)
+)
+
+Spend MoM Growth % = 
+VAR CurrentVal = [Total Procurement Spend USD]
+VAR PriorVal = [Procurement Spend Prior Month]
+RETURN
+    IF(
+        NOT(ISBLANK(PriorVal)) && PriorVal > 0,
+        DIVIDE(CurrentVal - PriorVal, PriorVal, 0),
+        BLANK()
+    )
+
+
+// -------------------------------------------------------------------------------
+// 3. LOGISTICS SHIPMENTS TIME INTELLIGENCE
+// -------------------------------------------------------------------------------
+
+Shipments MTD = 
+CALCULATE(
+    [Total Shipments],
+    DATESMTD('Dim_Date'[Date])
+)
+
+Shipments YTD = 
+CALCULATE(
+    [Total Shipments],
+    DATESYTD('Dim_Date'[Date])
+)
+
+Rolling 30-Day Shipments = 
+CALCULATE(
+    [Total Shipments],
+    DATESINPERIOD('Dim_Date'[Date], MAX('Dim_Date'[Date]), -30, DAY)
+)
+
+Rolling 30-Day OTD % = 
+CALCULATE(
+    [Logistics On-Time Rate (OTD %)],
+    DATESINPERIOD('Dim_Date'[Date], MAX('Dim_Date'[Date]), -30, DAY)
+)
+

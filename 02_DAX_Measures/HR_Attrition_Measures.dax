@@ -1,0 +1,190 @@
+// ===============================================================================
+// DAX MEASURES REPOSITORY: HR ANALYTICS - EMPLOYEE ATTRITION DASHBOARD
+// Dataset: IBM_HR_Employee_Attrition
+// Author: Power BI Solution Architecture
+// ===============================================================================
+
+// -------------------------------------------------------------------------------
+// 1. BASE HEADCOUNT & ATTRITION VOLUME
+// -------------------------------------------------------------------------------
+
+Total Employees = 
+COUNTROWS('IBM_HR_Employee_Attrition')
+
+Active Employees = 
+CALCULATE(
+    COUNTROWS('IBM_HR_Employee_Attrition'),
+    'IBM_HR_Employee_Attrition'[Attrition] = "No"
+)
+
+Attrition Count = 
+CALCULATE(
+    COUNTROWS('IBM_HR_Employee_Attrition'),
+    'IBM_HR_Employee_Attrition'[Attrition] = "Yes"
+)
+
+Attrition Rate % = 
+VAR TotalCount = [Total Employees]
+VAR Leavers = [Attrition Count]
+RETURN
+    IF(
+        TotalCount > 0,
+        DIVIDE(Leavers, TotalCount, 0),
+        BLANK()
+    )
+
+Retention Rate % = 
+1 - [Attrition Rate %]
+
+
+// -------------------------------------------------------------------------------
+// 2. ATTRITION BY KEY DIMENSIONS (DEPARTMENT, TENURE, SALARY)
+// -------------------------------------------------------------------------------
+
+// Department Attrition Rate
+Dept Attrition Rate % = 
+VAR DeptLeavers = CALCULATE([Attrition Count])
+VAR DeptTotal = CALCULATE([Total Employees])
+RETURN
+    DIVIDE(DeptLeavers, DeptTotal, 0)
+
+// Attrition Share of Total Leavers (Calculates what % of all leavers came from the selected category)
+Attrition Share of Leavers % = 
+VAR SelectedLeavers = [Attrition Count]
+VAR AllLeavers = CALCULATE([Attrition Count], ALLSELECTED('IBM_HR_Employee_Attrition'))
+RETURN
+    DIVIDE(SelectedLeavers, AllLeavers, 0)
+
+// Attrition Count by Overtime
+Attrition OverTime Yes = 
+CALCULATE(
+    [Attrition Count],
+    'IBM_HR_Employee_Attrition'[OverTime] = "Yes"
+)
+
+Attrition OverTime No = 
+CALCULATE(
+    [Attrition Count],
+    'IBM_HR_Employee_Attrition'[OverTime] = "No"
+)
+
+// Overtime Attrition Impact %
+OverTime Attrition Rate % = 
+DIVIDE(
+    CALCULATE([Attrition Count], 'IBM_HR_Employee_Attrition'[OverTime] = "Yes"),
+    CALCULATE([Total Employees], 'IBM_HR_Employee_Attrition'[OverTime] = "Yes"),
+    0
+)
+
+
+// -------------------------------------------------------------------------------
+// 3. TENURE & DEMOGRAPHIC BENCHMARKS
+// -------------------------------------------------------------------------------
+
+Avg Tenure (Years at Company) = 
+AVERAGE('IBM_HR_Employee_Attrition'[YearsAtCompany])
+
+Avg Tenure of Leavers = 
+CALCULATE(
+    AVERAGE('IBM_HR_Employee_Attrition'[YearsAtCompany]),
+    'IBM_HR_Employee_Attrition'[Attrition] = "Yes"
+)
+
+Avg Tenure of Active Staff = 
+CALCULATE(
+    AVERAGE('IBM_HR_Employee_Attrition'[YearsAtCompany]),
+    'IBM_HR_Employee_Attrition'[Attrition] = "No"
+)
+
+Avg Age = 
+AVERAGE('IBM_HR_Employee_Attrition'[Age])
+
+Avg Age of Leavers = 
+CALCULATE(
+    AVERAGE('IBM_HR_Employee_Attrition'[Age]),
+    'IBM_HR_Employee_Attrition'[Attrition] = "Yes"
+)
+
+Avg Distance from Home (KM/Miles) = 
+AVERAGE('IBM_HR_Employee_Attrition'[DistanceFromHome])
+
+Avg Distance Leavers = 
+CALCULATE(
+    AVERAGE('IBM_HR_Employee_Attrition'[DistanceFromHome]),
+    'IBM_HR_Employee_Attrition'[Attrition] = "Yes"
+)
+
+
+// -------------------------------------------------------------------------------
+// 4. COMPENSATION & SALARY BAND METRICS
+// -------------------------------------------------------------------------------
+
+Avg Monthly Income = 
+AVERAGE('IBM_HR_Employee_Attrition'[MonthlyIncome])
+
+Avg Monthly Income - Leavers = 
+CALCULATE(
+    AVERAGE('IBM_HR_Employee_Attrition'[MonthlyIncome]),
+    'IBM_HR_Employee_Attrition'[Attrition] = "Yes"
+)
+
+Avg Monthly Income - Active = 
+CALCULATE(
+    AVERAGE('IBM_HR_Employee_Attrition'[MonthlyIncome]),
+    'IBM_HR_Employee_Attrition'[Attrition] = "No"
+)
+
+Income Disparity (Active vs Leaver) = 
+[Avg Monthly Income - Active] - [Avg Monthly Income - Leavers]
+
+Income Disparity % = 
+DIVIDE([Income Disparity (Active vs Leaver)], [Avg Monthly Income - Active], 0)
+
+Total Monthly Payroll = 
+SUM('IBM_HR_Employee_Attrition'[MonthlyIncome])
+
+Estimated Annual Cost of Attrition = 
+// Industry standard: Replacing an employee costs approx. 1.5x - 2.0x their annual salary
+VAR AnnualSalaryLost = CALCULATE(
+    SUM('IBM_HR_Employee_Attrition'[MonthlyIncome]) * 12,
+    'IBM_HR_Employee_Attrition'[Attrition] = "Yes"
+)
+RETURN
+    AnnualSalaryLost * 1.5
+
+
+// -------------------------------------------------------------------------------
+// 5. EMPLOYEE SATISFACTION & FLIGHT RISK SCORING
+// -------------------------------------------------------------------------------
+
+Avg Job Satisfaction (1-4) = 
+AVERAGE('IBM_HR_Employee_Attrition'[JobSatisfaction])
+
+Avg Environment Satisfaction (1-4) = 
+AVERAGE('IBM_HR_Employee_Attrition'[EnvironmentSatisfaction])
+
+Avg Work-Life Balance (1-4) = 
+AVERAGE('IBM_HR_Employee_Attrition'[WorkLifeBalance])
+
+// Flight Risk Index (0 - 100 Scale)
+// Composite risk formula evaluating Overtime, Low Satisfaction, High Travel, and Low Tenure
+High Risk Flight Count = 
+CALCULATE(
+    COUNTROWS('IBM_HR_Employee_Attrition'),
+    'IBM_HR_Employee_Attrition'[Attrition] = "No",
+    'IBM_HR_Employee_Attrition'[OverTime] = "Yes",
+    'IBM_HR_Employee_Attrition'[JobSatisfaction] <= 2,
+    'IBM_HR_Employee_Attrition'[YearsAtCompany] <= 3
+)
+
+// Dynamic Card Color Formatting (Returns Hex code for conditional formatting)
+Attrition Rate KPI Status Color = 
+VAR Rate = [Attrition Rate %]
+RETURN
+    SWITCH(
+        TRUE(),
+        Rate <= 0.12, "#107C41", // Green (Healthy, <= 12%)
+        Rate <= 0.18, "#F2C94C", // Yellow/Amber (Warning, 12% - 18%)
+        "#D83B01"               // Red (High Risk, > 18%)
+    )
+

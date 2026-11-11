@@ -1,0 +1,153 @@
+// ===============================================================================
+// DAX MEASURES REPOSITORY: OPERATIONS & SUPPLY CHAIN - LOGISTICS & FLEET TRACKING
+// Dataset: Logistics_Fleet_Tracking
+// Author: Power BI Solution Architecture
+// ===============================================================================
+
+// -------------------------------------------------------------------------------
+// 1. SHIPMENT VOLUME & FLEET ACTIVITY
+// -------------------------------------------------------------------------------
+
+Total Shipments = 
+COUNTROWS('Logistics_Fleet_Tracking')
+
+Total Distance Traveled KM = 
+SUM('Logistics_Fleet_Tracking'[Distance_KM])
+
+Avg Shipment Distance KM = 
+AVERAGE('Logistics_Fleet_Tracking'[Distance_KM])
+
+Active Carriers Count = 
+DISTINCTCOUNT('Logistics_Fleet_Tracking'[Carrier_ID])
+
+Active Routes Count = 
+DISTINCTCOUNT('Logistics_Fleet_Tracking'[Origin_City]) 
+
+
+// -------------------------------------------------------------------------------
+// 2. DELIVERY TIMES & ON-TIME DELIVERY (OTD) RATES
+// -------------------------------------------------------------------------------
+
+On-Time Shipments Count = 
+CALCULATE(
+    COUNTROWS('Logistics_Fleet_Tracking'),
+    'Logistics_Fleet_Tracking'[On_Time_Flag] = 1
+)
+
+Delayed Shipments Count = 
+CALCULATE(
+    COUNTROWS('Logistics_Fleet_Tracking'),
+    'Logistics_Fleet_Tracking'[On_Time_Flag] = 0
+)
+
+Severely Delayed Shipments Count = 
+CALCULATE(
+    COUNTROWS('Logistics_Fleet_Tracking'),
+    'Logistics_Fleet_Tracking'[Delivery_Status] = "Severely Delayed (>24h)"
+)
+
+Logistics On-Time Rate (OTD %) = 
+VAR TotalCount = [Total Shipments]
+VAR OnTime = [On-Time Shipments Count]
+RETURN
+    IF(TotalCount > 0, DIVIDE(OnTime, TotalCount, 0), BLANK())
+
+Delayed Shipments Rate % = 
+1 - [Logistics On-Time Rate (OTD %)]
+
+Severe Delay Rate % = 
+DIVIDE([Severely Delayed Shipments Count], [Total Shipments], 0)
+
+Avg Transit Duration (Hours) = 
+AVERAGE('Logistics_Fleet_Tracking'[Transit_Duration_Hours])
+
+Avg Transit Duration (Days) = 
+DIVIDE([Avg Transit Duration (Hours)], 24, 0)
+
+Avg Delay Time (Hours) = 
+AVERAGE('Logistics_Fleet_Tracking'[Delay_Hours])
+
+Avg Delay on Late Shipments (Hours) = 
+CALCULATE(
+    AVERAGE('Logistics_Fleet_Tracking'[Delay_Hours]),
+    'Logistics_Fleet_Tracking'[On_Time_Flag] = 0
+)
+
+
+// -------------------------------------------------------------------------------
+// 3. ROUTE EFFICIENCY & NETWORK PERFORMANCE
+// -------------------------------------------------------------------------------
+
+Avg Route Efficiency % = 
+AVERAGE('Logistics_Fleet_Tracking'[Route_Efficiency_Index_Pct]) / 100
+
+Route Efficiency Target SLA = 0.90 // 90% SLA Target
+
+Route Efficiency Variance = 
+[Avg Route Efficiency %] - [Route Efficiency Target SLA]
+
+High Efficiency Shipments Count = 
+CALCULATE(
+    COUNTROWS('Logistics_Fleet_Tracking'),
+    'Logistics_Fleet_Tracking'[Route_Efficiency_Index_Pct] >= 90
+)
+
+Low Efficiency Bottleneck Shipments = 
+CALCULATE(
+    COUNTROWS('Logistics_Fleet_Tracking'),
+    'Logistics_Fleet_Tracking'[Route_Efficiency_Index_Pct] < 80
+)
+
+
+// -------------------------------------------------------------------------------
+// 4. FREIGHT COSTS, FUEL & EMISSIONS (SUSTAINABILITY)
+// -------------------------------------------------------------------------------
+
+Total Freight Spend USD = 
+SUM('Logistics_Fleet_Tracking'[Freight_Cost_USD])
+
+Avg Freight Cost Per Shipment = 
+AVERAGE('Logistics_Fleet_Tracking'[Freight_Cost_USD])
+
+Avg Freight Cost Per KM USD = 
+DIVIDE([Total Freight Spend USD], [Total Distance Traveled KM], 0)
+
+Total Fuel Consumed (Liters) = 
+SUM('Logistics_Fleet_Tracking'[Fuel_Consumption_Liters])
+
+Fleet Fuel Economy (KM/L) = 
+DIVIDE([Total Distance Traveled KM], [Total Fuel Consumed (Liters)], 0)
+
+Total CO2 Emissions (MT) = 
+// Metric Tons = KG / 1000
+DIVIDE(SUM('Logistics_Fleet_Tracking'[CO2_Emissions_KG]), 1000, 0)
+
+Carbon Intensity (KG CO2 per KM) = 
+DIVIDE(SUM('Logistics_Fleet_Tracking'[CO2_Emissions_KG]), [Total Distance Traveled KM], 0)
+
+Avg Customer Delivery Rating (1-5) = 
+AVERAGE('Logistics_Fleet_Tracking'[Customer_Satisfaction_Score])
+
+
+// -------------------------------------------------------------------------------
+// 5. CARRIER PERFORMANCE SCORECARD RANKING
+// -------------------------------------------------------------------------------
+
+Carrier Performance Index = 
+// Balanced Scorecard: 50% OTD, 30% Route Efficiency, 20% Customer Satisfaction
+VAR OTDScore = [Logistics On-Time Rate (OTD %)] * 50
+VAR EfficiencyScore = [Avg Route Efficiency %] * 30
+VAR RatingScore = ([Avg Customer Delivery Rating (1-5)] / 5) * 20
+RETURN
+    OTDScore + EfficiencyScore + RatingScore
+
+OTD KPI Status Color = 
+VAR Rate = [Logistics On-Time Rate (OTD %)]
+RETURN
+    SWITCH(
+        TRUE(),
+        Rate >= 0.90, "#107C41", // Green (Target >= 90%)
+        Rate >= 0.80, "#F2C94C", // Amber (80% - 89%)
+        "#D83B01"               // Red (< 80%)
+    )
+

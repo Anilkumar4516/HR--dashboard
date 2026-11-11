@@ -1,0 +1,187 @@
+// ===============================================================================
+// DAX MEASURES REPOSITORY: OPERATIONS & SUPPLY CHAIN - INVENTORY & SUPPLIER PERFORMANCE
+// Dataset: Inventory_Supplier_Performance
+// Author: Power BI Solution Architecture
+// ===============================================================================
+
+// -------------------------------------------------------------------------------
+// 1. INVENTORY VALUATION & STOCK LEVEL HEALTH
+// -------------------------------------------------------------------------------
+
+Total Active SKUs = 
+DISTINCTCOUNT('Inventory_Supplier_Performance'[SKU_Code])
+
+Total Purchase Orders = 
+DISTINCTCOUNT('Inventory_Supplier_Performance'[PO_Number])
+
+Total Units Ordered = 
+SUM('Inventory_Supplier_Performance'[Order_Quantity])
+
+Total Units Received = 
+SUM('Inventory_Supplier_Performance'[Received_Quantity])
+
+Total Procurement Spend USD = 
+SUM('Inventory_Supplier_Performance'[Total_PO_Spend_USD])
+
+Total Current Stock Units = 
+SUM('Inventory_Supplier_Performance'[Current_Stock_Level])
+
+Total Current Inventory Value USD = 
+SUMX(
+    'Inventory_Supplier_Performance',
+    'Inventory_Supplier_Performance'[Current_Stock_Level] * 'Inventory_Supplier_Performance'[Unit_Cost_USD]
+)
+
+Total Annual Carrying Cost USD = 
+SUM('Inventory_Supplier_Performance'[Annual_Carrying_Cost_USD])
+
+Avg Inventory Turnover Ratio = 
+AVERAGE('Inventory_Supplier_Performance'[Inventory_Turnover_Ratio])
+
+// Days Sales of Inventory (DSI): 365 / Turnover
+Days Sales of Inventory (DSI) = 
+VAR Turnover = [Avg Inventory Turnover Ratio]
+RETURN
+    IF(Turnover > 0, DIVIDE(365, Turnover, 0), BLANK())
+
+
+// -------------------------------------------------------------------------------
+// 2. STOCKOUT & REORDER RISK MONITORING
+// -------------------------------------------------------------------------------
+
+Critical Stockout SKUs Count = 
+CALCULATE(
+    DISTINCTCOUNT('Inventory_Supplier_Performance'[SKU_Code]),
+    'Inventory_Supplier_Performance'[Stock_Status] = "Critical Stockout Risk"
+)
+
+Reorder Required SKUs Count = 
+CALCULATE(
+    DISTINCTCOUNT('Inventory_Supplier_Performance'[SKU_Code]),
+    'Inventory_Supplier_Performance'[Stock_Status] = "Reorder Required"
+)
+
+Overstocked SKUs Count = 
+CALCULATE(
+    DISTINCTCOUNT('Inventory_Supplier_Performance'[SKU_Code]),
+    'Inventory_Supplier_Performance'[Stock_Status] = "Overstocked"
+)
+
+Healthy Stock SKUs Count = 
+CALCULATE(
+    DISTINCTCOUNT('Inventory_Supplier_Performance'[SKU_Code]),
+    'Inventory_Supplier_Performance'[Stock_Status] = "Healthy Stock"
+)
+
+Stockout Risk % = 
+DIVIDE([Critical Stockout SKUs Count], [Total Active SKUs], 0)
+
+Total Reorder Alert Value USD = 
+CALCULATE(
+    [Total Current Inventory Value USD],
+    'Inventory_Supplier_Performance'[Stock_Status] IN {"Critical Stockout Risk", "Reorder Required"}
+)
+
+
+// -------------------------------------------------------------------------------
+// 3. SUPPLIER DELIVERY PERFORMANCE & DELAYS
+// -------------------------------------------------------------------------------
+
+Total On-Time Deliveries = 
+CALCULATE(
+    COUNTROWS('Inventory_Supplier_Performance'),
+    'Inventory_Supplier_Performance'[Delivery_Delay_Days] <= 0
+)
+
+Total Delayed Deliveries = 
+CALCULATE(
+    COUNTROWS('Inventory_Supplier_Performance'),
+    'Inventory_Supplier_Performance'[Delivery_Delay_Days] > 0
+)
+
+Supplier On-Time Delivery Rate (OTD %) = 
+DIVIDE([Total On-Time Deliveries], COUNTROWS('Inventory_Supplier_Performance'), 0)
+
+Avg Delivery Delay (Days) = 
+AVERAGE('Inventory_Supplier_Performance'[Delivery_Delay_Days])
+
+Avg Delay for Late Orders (Days) = 
+CALCULATE(
+    AVERAGE('Inventory_Supplier_Performance'[Delivery_Delay_Days]),
+    'Inventory_Supplier_Performance'[Delivery_Delay_Days] > 0
+)
+
+Max Delivery Delay Observed (Days) = 
+MAX('Inventory_Supplier_Performance'[Delivery_Delay_Days])
+
+Critical Delay Deliveries Count = 
+CALCULATE(
+    COUNTROWS('Inventory_Supplier_Performance'),
+    'Inventory_Supplier_Performance'[Delivery_Status] = "Critical Delay (>7 Days)"
+)
+
+
+// -------------------------------------------------------------------------------
+// 4. QUALITY, DEFECTS & OTIF (ON-TIME IN-FULL)
+// -------------------------------------------------------------------------------
+
+Total Defect Units = 
+SUM('Inventory_Supplier_Performance'[Defect_Quantity])
+
+Supplier Defect Rate % = 
+VAR TotalReceived = [Total Units Received]
+VAR Defects = [Total Defect Units]
+RETURN
+    DIVIDE(Defects, TotalReceived, 0)
+
+Fulfillment Quantity Rate % = 
+DIVIDE([Total Units Received], [Total Units Ordered], 0)
+
+// On-Time In-Full (OTIF) %: Standard supply chain gold metric
+// Order must be delivered on-time (Delay <= 0) and received quantity == ordered quantity
+OTIF Deliveries Count = 
+CALCULATE(
+    COUNTROWS('Inventory_Supplier_Performance'),
+    'Inventory_Supplier_Performance'[Delivery_Delay_Days] <= 0,
+    'Inventory_Supplier_Performance'[Received_Quantity] >= 'Inventory_Supplier_Performance'[Order_Quantity]
+)
+
+OTIF Rate % = 
+DIVIDE([OTIF Deliveries Count], COUNTROWS('Inventory_Supplier_Performance'), 0)
+
+Avg Supplier Rating (1-5) = 
+AVERAGE('Inventory_Supplier_Performance'[Supplier_Rating])
+
+
+// -------------------------------------------------------------------------------
+// 5. COST TRENDS & SPEND ANALYSIS
+// -------------------------------------------------------------------------------
+
+Avg Unit Cost USD = 
+AVERAGE('Inventory_Supplier_Performance'[Unit_Cost_USD])
+
+Weighted Avg Unit Cost USD = 
+DIVIDE([Total Procurement Spend USD], [Total Units Received], 0)
+
+// Monthly Spend Growth (requires Date table relationship)
+Procurement Spend MoM Variance % = 
+VAR CurrentSpend = [Total Procurement Spend USD]
+VAR PriorMonthSpend = CALCULATE(
+    [Total Procurement Spend USD],
+    DATEADD('Dim_Date'[Date], -1, MONTH)
+)
+RETURN
+    IF(
+        NOT(ISBLANK(PriorMonthSpend)) && PriorMonthSpend > 0,
+        DIVIDE(CurrentSpend - PriorMonthSpend, PriorMonthSpend, 0),
+        BLANK()
+    )
+
+Supplier Risk Score (0-100) = 
+// Calculated weighted score: 40% OTD, 30% Defect rate, 30% Supplier rating
+VAR OTDScore = [Supplier On-Time Delivery Rate (OTD %)] * 40
+VAR DefectScore = (1 - [Supplier Defect Rate %]) * 30
+VAR RatingScore = ([Avg Supplier Rating (1-5)] / 5) * 30
+RETURN
+    OTDScore + DefectScore + RatingScore
+

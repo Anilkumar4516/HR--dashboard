@@ -1,0 +1,82 @@
+// ===============================================================================
+// ROW-LEVEL SECURITY (RLS) DEFINITIONS: MULTI-DOMAIN ENTERPRISE SUITE
+// Author: Power BI Solution Architecture & Security Governance
+// ===============================================================================
+
+// -------------------------------------------------------------------------------
+// 1. ROLE: HR_Department_Head (Dynamic Department Isolation)
+// -------------------------------------------------------------------------------
+// Purpose: Department heads (e.g. Head of Sales, Head of R&D) can only view headcount,
+// attrition metrics, and recruitment applications within their own department.
+// Table: IBM_HR_Employee_Attrition
+
+[Department] = 
+LOOKUPVALUE(
+    'Security_HR_UserMapping'[Department],
+    'Security_HR_UserMapping'[UserEmail],
+    USERPRINCIPALNAME()
+)
+
+// Table: HR_Recruitment_Funnel (Applied on Recruitment Table)
+[Department] = 
+LOOKUPVALUE(
+    'Security_HR_UserMapping'[Department],
+    'Security_HR_UserMapping'[UserEmail],
+    USERPRINCIPALNAME()
+)
+
+
+// -------------------------------------------------------------------------------
+// 2. ROLE: HR_Talent_Acquisition_Lead (Recruiter Workload & Funnel Scope)
+// -------------------------------------------------------------------------------
+// Purpose: Individual recruiters can only view the requisitions and candidates
+// assigned to them in the recruitment pipeline.
+// Table: HR_Recruitment_Funnel
+
+[RecruiterName] = 
+LOOKUPVALUE(
+    'Security_RecruiterMapping'[RecruiterName],
+    'Security_RecruiterMapping'[UserEmail],
+    USERPRINCIPALNAME()
+)
+
+
+// -------------------------------------------------------------------------------
+// 3. ROLE: SC_Regional_Warehouse_Manager (Dynamic Warehouse Isolation)
+// -------------------------------------------------------------------------------
+// Purpose: Regional warehouse directors (e.g. WH-North Chicago, WH-South Dallas)
+// only see Purchase Orders, inventory valuations, and safety stock for their warehouse.
+// Table: Inventory_Supplier_Performance
+
+[Warehouse_Location] = 
+LOOKUPVALUE(
+    'Security_WarehouseUserMapping'[Warehouse_Location],
+    'Security_WarehouseUserMapping'[UserEmail],
+    USERPRINCIPALNAME()
+)
+
+
+// -------------------------------------------------------------------------------
+// 4. ROLE: SC_Carrier_Partner (External 3PL Logistics Vendor Access)
+// -------------------------------------------------------------------------------
+// Purpose: Allows third-party logistics carriers (e.g. SwiftFreight, BlueSky Air Cargo)
+// to securely log into the Power BI App and view only their own fleet metrics,
+// OTD rates, and route efficiency without seeing competitor data.
+// Table: Logistics_Fleet_Tracking
+
+[Carrier_ID] = 
+LOOKUPVALUE(
+    'Security_CarrierUserMapping'[Carrier_ID],
+    'Security_CarrierUserMapping'[UserEmail],
+    USERPRINCIPALNAME()
+)
+
+
+// -------------------------------------------------------------------------------
+// 5. ROLE: Executive_Global_Viewer (Full Unfiltered Access)
+// -------------------------------------------------------------------------------
+// Purpose: C-Suite executives (CEO, COO, CHRO, VP Supply Chain) have complete,
+// cross-departmental and cross-warehouse visibility.
+// Filters: None (Unrestricted)
+TRUE()
+

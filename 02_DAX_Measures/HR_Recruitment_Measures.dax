@@ -1,0 +1,164 @@
+// ===============================================================================
+// DAX MEASURES REPOSITORY: HR ANALYTICS - RECRUITMENT FUNNEL & TALENT ACQUISITION
+// Dataset: HR_Recruitment_Funnel
+// Author: Power BI Solution Architecture
+// ===============================================================================
+
+// -------------------------------------------------------------------------------
+// 1. RECRUITMENT FUNNEL VOLUMES (STAGE COUNTS)
+// -------------------------------------------------------------------------------
+
+Total Applications = 
+COUNTROWS('HR_Recruitment_Funnel')
+
+Screened Count = 
+CALCULATE(
+    COUNTROWS('HR_Recruitment_Funnel'),
+    'HR_Recruitment_Funnel'[StageReached] IN {
+        "2. Screened", 
+        "3. Interviewed", 
+        "4. Offer Extended", 
+        "5. Hired"
+    }
+)
+
+Interviewed Count = 
+CALCULATE(
+    COUNTROWS('HR_Recruitment_Funnel'),
+    'HR_Recruitment_Funnel'[StageReached] IN {
+        "3. Interviewed", 
+        "4. Offer Extended", 
+        "5. Hired"
+    }
+)
+
+Offers Extended Count = 
+CALCULATE(
+    COUNTROWS('HR_Recruitment_Funnel'),
+    'HR_Recruitment_Funnel'[StageReached] IN {
+        "4. Offer Extended", 
+        "5. Hired"
+    }
+)
+
+Total Hired = 
+CALCULATE(
+    COUNTROWS('HR_Recruitment_Funnel'),
+    'HR_Recruitment_Funnel'[StageReached] = "5. Hired"
+)
+
+Offers Declined Count = 
+CALCULATE(
+    COUNTROWS('HR_Recruitment_Funnel'),
+    'HR_Recruitment_Funnel'[OfferAccepted] = "No"
+)
+
+
+// -------------------------------------------------------------------------------
+// 2. STAGE-TO-STAGE CONVERSION RATES & RATIOS
+// -------------------------------------------------------------------------------
+
+// Conversion: Applied -> Screened
+Screening Rate % = 
+DIVIDE([Screened Count], [Total Applications], 0)
+
+// Conversion: Screened -> Interviewed
+Interview Conversion Rate % = 
+DIVIDE([Interviewed Count], [Screened Count], 0)
+
+// Conversion: Interviewed -> Offer Extended
+Offer Conversion Rate % = 
+DIVIDE([Offers Extended Count], [Interviewed Count], 0)
+
+// Offer Acceptance Rate (OAR)
+Offer Acceptance Rate % = 
+VAR Offers = [Offers Extended Count]
+VAR Hires = [Total Hired]
+RETURN
+    DIVIDE(Hires, Offers, 0)
+
+// Overall End-to-End Funnel Conversion (Applied -> Hired)
+Overall Funnel Conversion Rate % = 
+DIVIDE([Total Hired], [Total Applications], 0)
+
+// Application-to-Hire Ratio (e.g. 1 out of X applicants hired)
+Applicants Per Hire = 
+DIVIDE([Total Applications], [Total Hired], 0)
+
+
+// -------------------------------------------------------------------------------
+// 3. VELOCITY & TIME-TO-HIRE METRICS
+// -------------------------------------------------------------------------------
+
+Avg Time to Hire (Days) = 
+CALCULATE(
+    AVERAGE('HR_Recruitment_Funnel'[TimeToHireDays]),
+    'HR_Recruitment_Funnel'[StageStatus] = "Hired"
+)
+
+Avg Time to Offer (Days) = 
+CALCULATE(
+    AVERAGE('HR_Recruitment_Funnel'[TimeToOfferDays]),
+    NOT(ISBLANK('HR_Recruitment_Funnel'[TimeToOfferDays]))
+)
+
+Median Time to Hire (Days) = 
+CALCULATE(
+    MEDIAN('HR_Recruitment_Funnel'[TimeToHireDays]),
+    'HR_Recruitment_Funnel'[StageStatus] = "Hired"
+)
+
+// Target SLA Benchmark (Standard SLA = 30 Days)
+TimeToHire SLA Variance (Days) = 
+[Avg Time to Hire (Days)] - 30
+
+TimeToHire SLA Status = 
+SWITCH(
+    TRUE(),
+    [Avg Time to Hire (Days)] <= 25, "Ahead of Target SLA",
+    [Avg Time to Hire (Days)] <= 32, "Within Target SLA",
+    "Exceeding Target SLA (Delay)"
+)
+
+
+// -------------------------------------------------------------------------------
+// 4. COST PER HIRE & SOURCING EFFICIENCY
+// -------------------------------------------------------------------------------
+
+Total Sourcing Cost USD = 
+SUM('HR_Recruitment_Funnel'[RecruitmentCostUSD])
+
+Cost Per Hire USD = 
+VAR TotalCost = [Total Sourcing Cost USD]
+VAR Hires = [Total Hired]
+RETURN
+    IF(
+        Hires > 0,
+        DIVIDE(TotalCost, Hires, 0),
+        BLANK()
+    )
+
+Cost Per Applicant USD = 
+DIVIDE([Total Sourcing Cost USD], [Total Applications], 0)
+
+Avg Candidate Experience Score (1-5) = 
+AVERAGE('HR_Recruitment_Funnel'[CandidateExperienceRating])
+
+Hired Candidate Experience Score = 
+CALCULATE(
+    AVERAGE('HR_Recruitment_Funnel'[CandidateExperienceRating]),
+    'HR_Recruitment_Funnel'[StageStatus] = "Hired"
+)
+
+
+// -------------------------------------------------------------------------------
+// 5. CHANNEL EFFECTIVENESS INDEX
+// -------------------------------------------------------------------------------
+
+// Sourcing Channel Quality Index: (Hires from Channel / Apps from Channel) / Overall Conversion Rate
+Channel Efficiency Score = 
+VAR ChannelRate = [Overall Funnel Conversion Rate %]
+VAR GlobalRate = CALCULATE([Overall Funnel Conversion Rate %], ALL('HR_Recruitment_Funnel'[ApplicationSource]))
+RETURN
+    DIVIDE(ChannelRate, GlobalRate, 1.0)
+

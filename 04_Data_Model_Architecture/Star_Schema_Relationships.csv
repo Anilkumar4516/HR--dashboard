@@ -1,0 +1,10 @@
+Relationship_ID,From_Table,From_Column,To_Table,To_Column,Cardinality,Cross_Filter_Direction,Active_Status,Description
+REL-01,Fact_HR_Recruitment_Funnel,ApplicationDate,Dim_Date,Date,Many to One (*:1),Single (Dim to Fact),Active,Primary temporal relationship for recruitment applications
+REL-02,Fact_HR_Recruitment_Funnel,HireDate,Dim_Date,Date,Many to One (*:1),Single (Dim to Fact),Inactive,Secondary temporal relationship for hire completion (activated via USERELATIONSHIP)
+REL-03,Fact_Inventory_Supplier_Performance,Order_Date,Dim_Date,Date,Many to One (*:1),Single (Dim to Fact),Active,Primary date relationship for procurement purchase orders
+REL-04,Fact_Inventory_Supplier_Performance,Actual_Delivery_Date,Dim_Date,Date,Many to One (*:1),Single (Dim to Fact),Inactive,Secondary date relationship for inventory receipt
+REL-05,Fact_Logistics_Fleet_Tracking,Dispatch_Date,Dim_Date,Date,Many to One (*:1),Single (Dim to Fact),Active,Primary date relationship for shipment dispatches
+REL-06,Fact_Logistics_Fleet_Tracking,Actual_Delivery_Date,Dim_Date,Date,Many to One (*:1),Single (Dim to Fact),Inactive,Secondary date relationship for completed deliveries
+REL-07,Fact_Inventory_Supplier_Performance,Supplier_ID,Dim_Supplier,Supplier_ID,Many to One (*:1),Single (Dim to Fact),Active,Supplier master dimension (optional snowflake / star branch)
+REL-08,Fact_Logistics_Fleet_Tracking,Carrier_ID,Dim_Carrier,Carrier_ID,Many to One (*:1),Single (Dim to Fact),Active,Carrier master dimension
+

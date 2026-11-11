@@ -1,0 +1,377 @@
+﻿{
+    "config":  "{\"version\":\"5.50\",\"themeCollection\":{\"baseTheme\":{\"name\":\"Corporate Modern Executive\",\"version\":\"1.0\",\"type\":2}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true}}",
+    "sections":  [
+                     {
+                         "name":  "ReportSection_Attrition",
+                         "visualContainers":  [
+                                                  {
+                                                      "config":  "{\"name\":\"Header_Attrition\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":0,\"width\":1240,\"height\":60}}],\"singleVisual\":{\"visualType\":\"textbox\"}}",
+                                                      "width":  1240,
+                                                      "y":  20,
+                                                      "z":  0,
+                                                      "x":  20,
+                                                      "height":  60
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_TotalEmployees\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":90,\"z\":1,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  1,
+                                                      "x":  20,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_AttritionCount\",\"layouts\":[{\"id\":0,\"position\":{\"x\":230,\"y\":90,\"z\":2,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  2,
+                                                      "x":  230,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_AttritionRate\",\"layouts\":[{\"id\":0,\"position\":{\"x\":440,\"y\":90,\"z\":3,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  3,
+                                                      "x":  440,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_AvgTenure\",\"layouts\":[{\"id\":0,\"position\":{\"x\":650,\"y\":90,\"z\":4,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  4,
+                                                      "x":  650,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_FlightRisk\",\"layouts\":[{\"id\":0,\"position\":{\"x\":860,\"y\":90,\"z\":5,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  5,
+                                                      "x":  860,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_AttritionCost\",\"layouts\":[{\"id\":0,\"position\":{\"x\":1070,\"y\":90,\"z\":6,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  6,
+                                                      "x":  1070,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_DeptAttrition\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":220,\"z\":7,\"width\":600,\"height\":230}}],\"singleVisual\":{\"visualType\":\"barChart\"}}",
+                                                      "width":  600,
+                                                      "y":  220,
+                                                      "z":  7,
+                                                      "x":  20,
+                                                      "height":  230
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_TenureAttrition\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640,\"y\":220,\"z\":8,\"width\":620,\"height\":230}}],\"singleVisual\":{\"visualType\":\"columnChart\"}}",
+                                                      "width":  620,
+                                                      "y":  220,
+                                                      "z":  8,
+                                                      "x":  640,
+                                                      "height":  230
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_SalaryBandAttrition\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":470,\"z\":9,\"width\":600,\"height\":230}}],\"singleVisual\":{\"visualType\":\"hundredPercentStackedBarChart\"}}",
+                                                      "width":  600,
+                                                      "y":  470,
+                                                      "z":  9,
+                                                      "x":  20,
+                                                      "height":  230
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Matrix_OvertimeSatisfaction\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640,\"y\":470,\"z\":10,\"width\":620,\"height\":230}}],\"singleVisual\":{\"visualType\":\"pivotTable\"}}",
+                                                      "width":  620,
+                                                      "y":  470,
+                                                      "z":  10,
+                                                      "x":  640,
+                                                      "height":  230
+                                                  }
+                                              ],
+                         "width":  1280,
+                         "filters":  "[]",
+                         "ordinal":  0,
+                         "displayName":  "1. Employee Attrition Diagnostics",
+                         "height":  720
+                     },
+                     {
+                         "name":  "ReportSection_Recruitment",
+                         "visualContainers":  [
+                                                  {
+                                                      "config":  "{\"name\":\"Header_Recruitment\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":0,\"width\":1240,\"height\":60}}],\"singleVisual\":{\"visualType\":\"textbox\"}}",
+                                                      "width":  1240,
+                                                      "y":  20,
+                                                      "z":  0,
+                                                      "x":  20,
+                                                      "height":  60
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_Applications\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":90,\"z\":1,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  1,
+                                                      "x":  20,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_Hires\",\"layouts\":[{\"id\":0,\"position\":{\"x\":230,\"y\":90,\"z\":2,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  2,
+                                                      "x":  230,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_FunnelYield\",\"layouts\":[{\"id\":0,\"position\":{\"x\":440,\"y\":90,\"z\":3,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  3,
+                                                      "x":  440,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_OfferAcceptance\",\"layouts\":[{\"id\":0,\"position\":{\"x\":650,\"y\":90,\"z\":4,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  4,
+                                                      "x":  650,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_TimeToHire\",\"layouts\":[{\"id\":0,\"position\":{\"x\":860,\"y\":90,\"z\":5,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  5,
+                                                      "x":  860,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_CostPerHire\",\"layouts\":[{\"id\":0,\"position\":{\"x\":1070,\"y\":90,\"z\":6,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  6,
+                                                      "x":  1070,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_FunnelStages\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":220,\"z\":7,\"width\":600,\"height\":240}}],\"singleVisual\":{\"visualType\":\"funnel\"}}",
+                                                      "width":  600,
+                                                      "y":  220,
+                                                      "z":  7,
+                                                      "x":  20,
+                                                      "height":  240
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_SourceYieldCost\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640,\"y\":220,\"z\":8,\"width\":620,\"height\":240}}],\"singleVisual\":{\"visualType\":\"scatterChart\"}}",
+                                                      "width":  620,
+                                                      "y":  220,
+                                                      "z":  8,
+                                                      "x":  640,
+                                                      "height":  240
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Table_RecruiterScorecard\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":480,\"z\":9,\"width\":1240,\"height\":220}}],\"singleVisual\":{\"visualType\":\"tableEx\"}}",
+                                                      "width":  1240,
+                                                      "y":  480,
+                                                      "z":  9,
+                                                      "x":  20,
+                                                      "height":  220
+                                                  }
+                                              ],
+                         "width":  1280,
+                         "filters":  "[]",
+                         "ordinal":  1,
+                         "displayName":  "2. Recruitment Funnel \u0026 Velocity",
+                         "height":  720
+                     },
+                     {
+                         "name":  "ReportSection_Inventory",
+                         "visualContainers":  [
+                                                  {
+                                                      "config":  "{\"name\":\"Header_Inventory\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":0,\"width\":1240,\"height\":60}}],\"singleVisual\":{\"visualType\":\"textbox\"}}",
+                                                      "width":  1240,
+                                                      "y":  20,
+                                                      "z":  0,
+                                                      "x":  20,
+                                                      "height":  60
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_InventoryVal\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":90,\"z\":1,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  1,
+                                                      "x":  20,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_StockoutRisk\",\"layouts\":[{\"id\":0,\"position\":{\"x\":230,\"y\":90,\"z\":2,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  2,
+                                                      "x":  230,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_SupplierOTD\",\"layouts\":[{\"id\":0,\"position\":{\"x\":440,\"y\":90,\"z\":3,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  3,
+                                                      "x":  440,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_AvgLeadDelay\",\"layouts\":[{\"id\":0,\"position\":{\"x\":650,\"y\":90,\"z\":4,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  4,
+                                                      "x":  650,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_OTIFRate\",\"layouts\":[{\"id\":0,\"position\":{\"x\":860,\"y\":90,\"z\":5,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  5,
+                                                      "x":  860,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_CarryingCost\",\"layouts\":[{\"id\":0,\"position\":{\"x\":1070,\"y\":90,\"z\":6,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  6,
+                                                      "x":  1070,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_StockStatus\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":220,\"z\":7,\"width\":600,\"height\":240}}],\"singleVisual\":{\"visualType\":\"pieChart\"}}",
+                                                      "width":  600,
+                                                      "y":  220,
+                                                      "z":  7,
+                                                      "x":  20,
+                                                      "height":  240
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_SupplierDelays\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640,\"y\":220,\"z\":8,\"width\":620,\"height\":240}}],\"singleVisual\":{\"visualType\":\"barChart\"}}",
+                                                      "width":  620,
+                                                      "y":  220,
+                                                      "z":  8,
+                                                      "x":  640,
+                                                      "height":  240
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Table_SupplierScorecard\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":480,\"z\":9,\"width\":1240,\"height\":220}}],\"singleVisual\":{\"visualType\":\"pivotTable\"}}",
+                                                      "width":  1240,
+                                                      "y":  480,
+                                                      "z":  9,
+                                                      "x":  20,
+                                                      "height":  220
+                                                  }
+                                              ],
+                         "width":  1280,
+                         "filters":  "[]",
+                         "ordinal":  2,
+                         "displayName":  "3. Inventory \u0026 Supplier Performance",
+                         "height":  720
+                     },
+                     {
+                         "name":  "ReportSection_Logistics",
+                         "visualContainers":  [
+                                                  {
+                                                      "config":  "{\"name\":\"Header_Logistics\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":0,\"width\":1240,\"height\":60}}],\"singleVisual\":{\"visualType\":\"textbox\"}}",
+                                                      "width":  1240,
+                                                      "y":  20,
+                                                      "z":  0,
+                                                      "x":  20,
+                                                      "height":  60
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_TotalShipments\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":90,\"z\":1,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  1,
+                                                      "x":  20,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_LogisticsOTD\",\"layouts\":[{\"id\":0,\"position\":{\"x\":230,\"y\":90,\"z\":2,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  2,
+                                                      "x":  230,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_TransitDuration\",\"layouts\":[{\"id\":0,\"position\":{\"x\":440,\"y\":90,\"z\":3,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  3,
+                                                      "x":  440,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_RouteEfficiency\",\"layouts\":[{\"id\":0,\"position\":{\"x\":650,\"y\":90,\"z\":4,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  4,
+                                                      "x":  650,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_CostPerKM\",\"layouts\":[{\"id\":0,\"position\":{\"x\":860,\"y\":90,\"z\":5,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  5,
+                                                      "x":  860,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Card_CO2Emissions\",\"layouts\":[{\"id\":0,\"position\":{\"x\":1070,\"y\":90,\"z\":6,\"width\":190,\"height\":110}}],\"singleVisual\":{\"visualType\":\"card\"}}",
+                                                      "width":  190,
+                                                      "y":  90,
+                                                      "z":  6,
+                                                      "x":  1070,
+                                                      "height":  110
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_TransportModeOTD\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":220,\"z\":7,\"width\":600,\"height\":240}}],\"singleVisual\":{\"visualType\":\"columnChart\"}}",
+                                                      "width":  600,
+                                                      "y":  220,
+                                                      "z":  7,
+                                                      "x":  20,
+                                                      "height":  240
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Chart_DelayReasons\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640,\"y\":220,\"z\":8,\"width\":620,\"height\":240}}],\"singleVisual\":{\"visualType\":\"barChart\"}}",
+                                                      "width":  620,
+                                                      "y":  220,
+                                                      "z":  8,
+                                                      "x":  640,
+                                                      "height":  240
+                                                  },
+                                                  {
+                                                      "config":  "{\"name\":\"Table_CarrierScorecard\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":480,\"z\":9,\"width\":1240,\"height\":220}}],\"singleVisual\":{\"visualType\":\"pivotTable\"}}",
+                                                      "width":  1240,
+                                                      "y":  480,
+                                                      "z":  9,
+                                                      "x":  20,
+                                                      "height":  220
+                                                  }
+                                              ],
+                         "width":  1280,
+                         "filters":  "[]",
+                         "ordinal":  3,
+                         "displayName":  "4. Logistics \u0026 Fleet Tracking",
+                         "height":  720
+                     }
+                 ],
+    "layoutOptimization":  0,
+    "resourcePackages":  [
+
+                         ]
+}

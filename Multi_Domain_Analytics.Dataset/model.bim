@@ -1,0 +1,772 @@
+﻿{
+    "name":  "Multi_Domain_Analytics",
+    "model":  {
+                  "tables":  [
+                                 {
+                                     "measures":  [
+                                                      {
+                                                          "expression":  "COUNTROWS(\u0027IBM_HR_Employee_Attrition\u0027)",
+                                                          "name":  "Total Employees"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027IBM_HR_Employee_Attrition\u0027), \u0027IBM_HR_Employee_Attrition\u0027[Attrition] = \"No\")",
+                                                          "name":  "Active Employees"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027IBM_HR_Employee_Attrition\u0027), \u0027IBM_HR_Employee_Attrition\u0027[Attrition] = \"Yes\")",
+                                                          "name":  "Attrition Count"
+                                                      },
+                                                      {
+                                                          "name":  "Attrition Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE([Attrition Count], [Total Employees], 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Retention Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "1 - [Attrition Rate %]"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Tenure of Leavers",
+                                                          "formatString":  "0.0",
+                                                          "expression":  "CALCULATE(AVERAGE(\u0027IBM_HR_Employee_Attrition\u0027[YearsAtCompany]), \u0027IBM_HR_Employee_Attrition\u0027[Attrition] = \"Yes\")"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Monthly Income",
+                                                          "formatString":  "\\$#,0",
+                                                          "expression":  "AVERAGE(\u0027IBM_HR_Employee_Attrition\u0027[MonthlyIncome])"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027IBM_HR_Employee_Attrition\u0027), \u0027IBM_HR_Employee_Attrition\u0027[Attrition] = \"No\", \u0027IBM_HR_Employee_Attrition\u0027[OverTime] = \"Yes\", \u0027IBM_HR_Employee_Attrition\u0027[JobSatisfaction] \u003c= 2, \u0027IBM_HR_Employee_Attrition\u0027[YearsAtCompany] \u003c= 3)",
+                                                          "name":  "High Risk Flight Count"
+                                                      },
+                                                      {
+                                                          "name":  "Estimated Annual Cost of Attrition",
+                                                          "formatString":  "\\$#,0",
+                                                          "expression":  "CALCULATE(SUM(\u0027IBM_HR_Employee_Attrition\u0027[MonthlyIncome]) * 12, \u0027IBM_HR_Employee_Attrition\u0027[Attrition] = \"Yes\") * 1.5"
+                                                      }
+                                                  ],
+                                     "partitions":  [
+                                                        {
+                                                            "name":  "IBM_HR_Employee_Attrition-Partition",
+                                                            "source":  {
+                                                                           "expression":  [
+                                                                                              "let",
+                                                                                              "    Source = Csv.Document(File.Contents(\"C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\HR_Analytics\\IBM_HR_Employee_Attrition.csv\"),[Delimiter=\",\", Columns=37, Encoding=65001, QuoteStyle=QuoteStyle.None]),",
+                                                                                              "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),",
+                                                                                              "    Typed = Table.TransformColumnTypes(Promoted,{{\"EmployeeNumber\", Int64.Type}, {\"Age\", Int64.Type}, {\"Attrition\", type text}, {\"Department\", type text}, {\"JobRole\", type text}, {\"MonthlyIncome\", Currency.Type}, {\"YearsAtCompany\", Int64.Type}, {\"OverTime\", type text}, {\"SalaryBand\", type text}, {\"TenureBand\", type text}})",
+                                                                                              "in",
+                                                                                              "    Typed"
+                                                                                          ],
+                                                                           "type":  "m"
+                                                                       },
+                                                            "mode":  "import"
+                                                        }
+                                                    ],
+                                     "name":  "IBM_HR_Employee_Attrition",
+                                     "columns":  [
+                                                     {
+                                                         "isHidden":  false,
+                                                         "name":  "EmployeeNumber",
+                                                         "dataType":  "int64",
+                                                         "sourceColumn":  "EmployeeNumber"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Age",
+                                                         "name":  "Age",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Attrition",
+                                                         "name":  "Attrition",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "BusinessTravel",
+                                                         "name":  "BusinessTravel",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "DailyRate",
+                                                         "name":  "DailyRate",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Department",
+                                                         "name":  "Department",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "DistanceFromHome",
+                                                         "name":  "DistanceFromHome",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Education",
+                                                         "name":  "Education",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "EducationField",
+                                                         "name":  "EducationField",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "EmployeeCount",
+                                                         "name":  "EmployeeCount",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "EnvironmentSatisfaction",
+                                                         "name":  "EnvironmentSatisfaction",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Gender",
+                                                         "name":  "Gender",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "HourlyRate",
+                                                         "name":  "HourlyRate",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "JobInvolvement",
+                                                         "name":  "JobInvolvement",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "JobLevel",
+                                                         "name":  "JobLevel",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "JobRole",
+                                                         "name":  "JobRole",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "JobSatisfaction",
+                                                         "name":  "JobSatisfaction",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "MaritalStatus",
+                                                         "name":  "MaritalStatus",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "MonthlyIncome",
+                                                         "name":  "MonthlyIncome",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "MonthlyRate",
+                                                         "name":  "MonthlyRate",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "NumCompaniesWorked",
+                                                         "name":  "NumCompaniesWorked",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Over18",
+                                                         "name":  "Over18",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "OverTime",
+                                                         "name":  "OverTime",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "PercentSalaryHike",
+                                                         "name":  "PercentSalaryHike",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "PerformanceRating",
+                                                         "name":  "PerformanceRating",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "RelationshipSatisfaction",
+                                                         "name":  "RelationshipSatisfaction",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "StandardHours",
+                                                         "name":  "StandardHours",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "StockOptionLevel",
+                                                         "name":  "StockOptionLevel",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "TotalWorkingYears",
+                                                         "name":  "TotalWorkingYears",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "TrainingTimesLastYear",
+                                                         "name":  "TrainingTimesLastYear",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "WorkLifeBalance",
+                                                         "name":  "WorkLifeBalance",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "YearsAtCompany",
+                                                         "name":  "YearsAtCompany",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "YearsInCurrentRole",
+                                                         "name":  "YearsInCurrentRole",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "YearsSinceLastPromotion",
+                                                         "name":  "YearsSinceLastPromotion",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "YearsWithCurrManager",
+                                                         "name":  "YearsWithCurrManager",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "SalaryBand",
+                                                         "name":  "SalaryBand",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "TenureBand",
+                                                         "name":  "TenureBand",
+                                                         "dataType":  "string"
+                                                     }
+                                                 ]
+                                 },
+                                 {
+                                     "measures":  [
+                                                      {
+                                                          "expression":  "COUNTROWS(\u0027HR_Recruitment_Funnel\u0027)",
+                                                          "name":  "Total Applications"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027HR_Recruitment_Funnel\u0027), \u0027HR_Recruitment_Funnel\u0027[StageReached] IN {\"2. Screened\", \"3. Interviewed\", \"4. Offer Extended\", \"5. Hired\"})",
+                                                          "name":  "Screened Count"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027HR_Recruitment_Funnel\u0027), \u0027HR_Recruitment_Funnel\u0027[StageReached] IN {\"3. Interviewed\", \"4. Offer Extended\", \"5. Hired\"})",
+                                                          "name":  "Interviewed Count"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027HR_Recruitment_Funnel\u0027), \u0027HR_Recruitment_Funnel\u0027[StageReached] IN {\"4. Offer Extended\", \"5. Hired\"})",
+                                                          "name":  "Offers Extended Count"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(COUNTROWS(\u0027HR_Recruitment_Funnel\u0027), \u0027HR_Recruitment_Funnel\u0027[StageReached] = \"5. Hired\")",
+                                                          "name":  "Total Hired"
+                                                      },
+                                                      {
+                                                          "name":  "Screening Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE([Screened Count], [Total Applications], 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Interview Conversion Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE([Interviewed Count], [Screened Count], 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Offer Acceptance Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE([Total Hired], [Offers Extended Count], 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Overall Funnel Conversion Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE([Total Hired], [Total Applications], 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Time to Hire (Days)",
+                                                          "formatString":  "0.0",
+                                                          "expression":  "CALCULATE(AVERAGE(\u0027HR_Recruitment_Funnel\u0027[TimeToHireDays]), \u0027HR_Recruitment_Funnel\u0027[StageStatus] = \"Hired\")"
+                                                      },
+                                                      {
+                                                          "name":  "Cost Per Hire USD",
+                                                          "formatString":  "\\$#,0",
+                                                          "expression":  "DIVIDE(SUM(\u0027HR_Recruitment_Funnel\u0027[RecruitmentCostUSD]), [Total Hired], 0)"
+                                                      }
+                                                  ],
+                                     "partitions":  [
+                                                        {
+                                                            "name":  "HR_Recruitment_Funnel-Partition",
+                                                            "source":  {
+                                                                           "expression":  [
+                                                                                              "let",
+                                                                                              "    Source = Csv.Document(File.Contents(\"C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\HR_Analytics\\HR_Recruitment_Funnel.csv\"),[Delimiter=\",\", Columns=18, Encoding=65001, QuoteStyle=QuoteStyle.None]),",
+                                                                                              "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),",
+                                                                                              "    Typed = Table.TransformColumnTypes(Promoted,{{\"CandidateID\", type text}, {\"Department\", type text}, {\"JobRole\", type text}, {\"ApplicationSource\", type text}, {\"RecruiterName\", type text}, {\"ApplicationDate\", type date}, {\"StageReached\", type text}, {\"StageStatus\", type text}, {\"TimeToHireDays\", Int64.Type}, {\"RecruitmentCostUSD\", Currency.Type}})",
+                                                                                              "in",
+                                                                                              "    Typed"
+                                                                                          ],
+                                                                           "type":  "m"
+                                                                       },
+                                                            "mode":  "import"
+                                                        }
+                                                    ],
+                                     "name":  "HR_Recruitment_Funnel",
+                                     "columns":  [
+                                                     {
+                                                         "sourceColumn":  "CandidateID",
+                                                         "name":  "CandidateID",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "CandidateName",
+                                                         "name":  "CandidateName",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "RequisitionID",
+                                                         "name":  "RequisitionID",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Department",
+                                                         "name":  "Department",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "JobRole",
+                                                         "name":  "JobRole",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "ApplicationSource",
+                                                         "name":  "ApplicationSource",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "RecruiterName",
+                                                         "name":  "RecruiterName",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "ApplicationDate",
+                                                         "name":  "ApplicationDate",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "ScreeningDate",
+                                                         "name":  "ScreeningDate",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "InterviewDate",
+                                                         "name":  "InterviewDate",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "OfferDate",
+                                                         "name":  "OfferDate",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "HireDate",
+                                                         "name":  "HireDate",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "StageReached",
+                                                         "name":  "StageReached",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "StageStatus",
+                                                         "name":  "StageStatus",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "TimeToOfferDays",
+                                                         "name":  "TimeToOfferDays",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "TimeToHireDays",
+                                                         "name":  "TimeToHireDays",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "OfferAccepted",
+                                                         "name":  "OfferAccepted",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "CandidateExperienceRating",
+                                                         "name":  "CandidateExperienceRating",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "RecruitmentCostUSD",
+                                                         "name":  "RecruitmentCostUSD",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0"
+                                                     }
+                                                 ]
+                                 },
+                                 {
+                                     "measures":  [
+                                                      {
+                                                          "expression":  "DISTINCTCOUNT(\u0027Inventory_Supplier_Performance\u0027[SKU_Code])",
+                                                          "name":  "Total Active SKUs"
+                                                      },
+                                                      {
+                                                          "name":  "Total Current Inventory Value USD",
+                                                          "formatString":  "\\$#,0",
+                                                          "expression":  "SUMX(\u0027Inventory_Supplier_Performance\u0027, \u0027Inventory_Supplier_Performance\u0027[Current_Stock_Level] * \u0027Inventory_Supplier_Performance\u0027[Unit_Cost_USD])"
+                                                      },
+                                                      {
+                                                          "expression":  "CALCULATE(DISTINCTCOUNT(\u0027Inventory_Supplier_Performance\u0027[SKU_Code]), \u0027Inventory_Supplier_Performance\u0027[Stock_Status] = \"Critical Stockout Risk\")",
+                                                          "name":  "Critical Stockout SKUs Count"
+                                                      },
+                                                      {
+                                                          "name":  "Supplier On-Time Delivery Rate (OTD %)",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE(CALCULATE(COUNTROWS(\u0027Inventory_Supplier_Performance\u0027), \u0027Inventory_Supplier_Performance\u0027[Delivery_Delay_Days] \u003c= 0), COUNTROWS(\u0027Inventory_Supplier_Performance\u0027), 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Delay for Late Orders (Days)",
+                                                          "formatString":  "0.0",
+                                                          "expression":  "CALCULATE(AVERAGE(\u0027Inventory_Supplier_Performance\u0027[Delivery_Delay_Days]), \u0027Inventory_Supplier_Performance\u0027[Delivery_Delay_Days] \u003e 0)"
+                                                      },
+                                                      {
+                                                          "name":  "OTIF Rate %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE(CALCULATE(COUNTROWS(\u0027Inventory_Supplier_Performance\u0027), \u0027Inventory_Supplier_Performance\u0027[Delivery_Delay_Days] \u003c= 0, \u0027Inventory_Supplier_Performance\u0027[Received_Quantity] \u003e= \u0027Inventory_Supplier_Performance\u0027[Order_Quantity]), COUNTROWS(\u0027Inventory_Supplier_Performance\u0027), 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Total Annual Carrying Cost USD",
+                                                          "formatString":  "\\$#,0",
+                                                          "expression":  "SUM(\u0027Inventory_Supplier_Performance\u0027[Annual_Carrying_Cost_USD])"
+                                                      }
+                                                  ],
+                                     "partitions":  [
+                                                        {
+                                                            "name":  "Inventory_Supplier_Performance-Partition",
+                                                            "source":  {
+                                                                           "expression":  [
+                                                                                              "let",
+                                                                                              "    Source = Csv.Document(File.Contents(\"C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\Supply_Chain\\Inventory_Supplier_Performance.csv\"),[Delimiter=\",\", Columns=23, Encoding=65001, QuoteStyle=QuoteStyle.None]),",
+                                                                                              "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),",
+                                                                                              "    Typed = Table.TransformColumnTypes(Promoted,{{\"PO_Number\", type text}, {\"SKU_Code\", type text}, {\"Product_Category\", type text}, {\"Supplier_Name\", type text}, {\"Order_Date\", type date}, {\"Delivery_Delay_Days\", Int64.Type}, {\"Stock_Status\", type text}, {\"Total_PO_Spend_USD\", Currency.Type}, {\"Current_Stock_Level\", Int64.Type}, {\"Unit_Cost_USD\", Currency.Type}})",
+                                                                                              "in",
+                                                                                              "    Typed"
+                                                                                          ],
+                                                                           "type":  "m"
+                                                                       },
+                                                            "mode":  "import"
+                                                        }
+                                                    ],
+                                     "name":  "Inventory_Supplier_Performance",
+                                     "columns":  [
+                                                     {
+                                                         "sourceColumn":  "PO_Number",
+                                                         "name":  "PO_Number",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "SKU_Code",
+                                                         "name":  "SKU_Code",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Product_Category",
+                                                         "name":  "Product_Category",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Supplier_ID",
+                                                         "name":  "Supplier_ID",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Supplier_Name",
+                                                         "name":  "Supplier_Name",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Supplier_Rating",
+                                                         "name":  "Supplier_Rating",
+                                                         "dataType":  "double"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Warehouse_Location",
+                                                         "name":  "Warehouse_Location",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Order_Date",
+                                                         "name":  "Order_Date",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Promised_Delivery_Date",
+                                                         "name":  "Promised_Delivery_Date",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Actual_Delivery_Date",
+                                                         "name":  "Actual_Delivery_Date",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Delivery_Delay_Days",
+                                                         "name":  "Delivery_Delay_Days",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Delivery_Status",
+                                                         "name":  "Delivery_Status",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Order_Quantity",
+                                                         "name":  "Order_Quantity",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Received_Quantity",
+                                                         "name":  "Received_Quantity",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Defect_Quantity",
+                                                         "name":  "Defect_Quantity",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Unit_Cost_USD",
+                                                         "name":  "Unit_Cost_USD",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0.00"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Total_PO_Spend_USD",
+                                                         "name":  "Total_PO_Spend_USD",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Current_Stock_Level",
+                                                         "name":  "Current_Stock_Level",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Safety_Stock_Level",
+                                                         "name":  "Safety_Stock_Level",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Reorder_Point",
+                                                         "name":  "Reorder_Point",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Stock_Status",
+                                                         "name":  "Stock_Status",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Annual_Carrying_Cost_USD",
+                                                         "name":  "Annual_Carrying_Cost_USD",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Inventory_Turnover_Ratio",
+                                                         "name":  "Inventory_Turnover_Ratio",
+                                                         "dataType":  "double"
+                                                     }
+                                                 ]
+                                 },
+                                 {
+                                     "measures":  [
+                                                      {
+                                                          "expression":  "COUNTROWS(\u0027Logistics_Fleet_Tracking\u0027)",
+                                                          "name":  "Total Shipments"
+                                                      },
+                                                      {
+                                                          "name":  "Logistics On-Time Rate (OTD %)",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "DIVIDE(CALCULATE(COUNTROWS(\u0027Logistics_Fleet_Tracking\u0027), \u0027Logistics_Fleet_Tracking\u0027[On_Time_Flag] = 1), COUNTROWS(\u0027Logistics_Fleet_Tracking\u0027), 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Transit Duration (Hours)",
+                                                          "formatString":  "0.0",
+                                                          "expression":  "AVERAGE(\u0027Logistics_Fleet_Tracking\u0027[Transit_Duration_Hours])"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Route Efficiency %",
+                                                          "formatString":  "0.0%",
+                                                          "expression":  "AVERAGE(\u0027Logistics_Fleet_Tracking\u0027[Route_Efficiency_Index_Pct]) / 100"
+                                                      },
+                                                      {
+                                                          "name":  "Avg Freight Cost Per KM USD",
+                                                          "formatString":  "\\$#,0.00",
+                                                          "expression":  "DIVIDE(SUM(\u0027Logistics_Fleet_Tracking\u0027[Freight_Cost_USD]), SUM(\u0027Logistics_Fleet_Tracking\u0027[Distance_KM]), 0)"
+                                                      },
+                                                      {
+                                                          "name":  "Total CO2 Emissions (MT)",
+                                                          "formatString":  "#,0",
+                                                          "expression":  "DIVIDE(SUM(\u0027Logistics_Fleet_Tracking\u0027[CO2_Emissions_KG]), 1000, 0)"
+                                                      }
+                                                  ],
+                                     "partitions":  [
+                                                        {
+                                                            "name":  "Logistics_Fleet_Tracking-Partition",
+                                                            "source":  {
+                                                                           "expression":  [
+                                                                                              "let",
+                                                                                              "    Source = Csv.Document(File.Contents(\"C:\\Users\\rajuv\\OneDrive\\Desktop\\POWER BI\\01_Data\\Supply_Chain\\Logistics_Fleet_Tracking.csv\"),[Delimiter=\",\", Columns=21, Encoding=65001, QuoteStyle=QuoteStyle.None]),",
+                                                                                              "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),",
+                                                                                              "    Typed = Table.TransformColumnTypes(Promoted,{{\"Shipment_ID\", type text}, {\"Carrier_Name\", type text}, {\"Transport_Mode\", type text}, {\"Distance_KM\", Int64.Type}, {\"Transit_Duration_Hours\", type number}, {\"Delay_Hours\", type number}, {\"On_Time_Flag\", Int64.Type}, {\"Freight_Cost_USD\", Currency.Type}, {\"Customer_Satisfaction_Score\", Int64.Type}})",
+                                                                                              "in",
+                                                                                              "    Typed"
+                                                                                          ],
+                                                                           "type":  "m"
+                                                                       },
+                                                            "mode":  "import"
+                                                        }
+                                                    ],
+                                     "name":  "Logistics_Fleet_Tracking",
+                                     "columns":  [
+                                                     {
+                                                         "sourceColumn":  "Shipment_ID",
+                                                         "name":  "Shipment_ID",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Carrier_ID",
+                                                         "name":  "Carrier_ID",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Carrier_Name",
+                                                         "name":  "Carrier_Name",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Transport_Mode",
+                                                         "name":  "Transport_Mode",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Origin_City",
+                                                         "name":  "Origin_City",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Destination_City",
+                                                         "name":  "Destination_City",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Distance_KM",
+                                                         "name":  "Distance_KM",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Dispatch_Timestamp",
+                                                         "name":  "Dispatch_Timestamp",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Planned_Delivery_Timestamp",
+                                                         "name":  "Planned_Delivery_Timestamp",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Actual_Delivery_Timestamp",
+                                                         "name":  "Actual_Delivery_Timestamp",
+                                                         "dataType":  "dateTime"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Transit_Duration_Hours",
+                                                         "name":  "Transit_Duration_Hours",
+                                                         "dataType":  "double"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Delay_Hours",
+                                                         "name":  "Delay_Hours",
+                                                         "dataType":  "double"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "On_Time_Flag",
+                                                         "name":  "On_Time_Flag",
+                                                         "dataType":  "int64"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Delivery_Status",
+                                                         "name":  "Delivery_Status",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Delay_Reason",
+                                                         "name":  "Delay_Reason",
+                                                         "dataType":  "string"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Route_Efficiency_Index_Pct",
+                                                         "name":  "Route_Efficiency_Index_Pct",
+                                                         "dataType":  "double"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Fuel_Consumption_Liters",
+                                                         "name":  "Fuel_Consumption_Liters",
+                                                         "dataType":  "double"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "CO2_Emissions_KG",
+                                                         "name":  "CO2_Emissions_KG",
+                                                         "dataType":  "double"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Freight_Cost_USD",
+                                                         "name":  "Freight_Cost_USD",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Cost_Per_KM_USD",
+                                                         "name":  "Cost_Per_KM_USD",
+                                                         "dataType":  "decimal",
+                                                         "formatString":  "\\$#,0.00"
+                                                     },
+                                                     {
+                                                         "sourceColumn":  "Customer_Satisfaction_Score",
+                                                         "name":  "Customer_Satisfaction_Score",
+                                                         "dataType":  "int64"
+                                                     }
+                                                 ]
+                                 }
+                             ],
+                  "culture":  "en-US",
+                  "sourceQueryCulture":  "en-US",
+                  "dataAccessOptions":  {
+                                            "legacyRedirects":  true,
+                                            "returnErrorValuesAsNull":  true
+                                        },
+                  "defaultPowerBIDataSourceVersion":  "powerBI_V3"
+              },
+    "compatibilityLevel":  1567
+}

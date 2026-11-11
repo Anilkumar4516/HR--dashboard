@@ -1,0 +1,124 @@
+# Azure DevOps Multi-Stage Deployment Pipeline for Power BI
+# Supports Dev -> Test -> Prod promotion with environment approval gates
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Multi_Domain_Analytics.pbip
+      - Multi_Domain_Analytics.Dataset/*
+      - Multi_Domain_Analytics.Report/*
+      - 01_Data/*
+
+variables:
+  - group: PowerBI-Enterprise-Credentials # Variable group containing TenantId, ClientId, ClientSecret
+  - name: PbipFile
+    value: '$(Build.SourcesDirectory)/Multi_Domain_Analytics.pbip'
+
+stages:
+# -----------------------------------------------------------------------------
+# STAGE 1: VALIDATION & COMPLIANCE RULES
+# -----------------------------------------------------------------------------
+- stage: BuildAndValidate
+  displayName: '1. Model Validation & DAX Linting'
+  jobs:
+  - job: ValidateBIM
+    displayName: 'Validate Tabular Object Model'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - checkout: self
+    - powershell: |
+        Write-Host "Verifying Power BI Project structure..."
+        Test-Path $(PbipFile)
+        Test-Path "$(Build.SourcesDirectory)/Multi_Domain_Analytics.Dataset/model.bim"
+        Test-Path "$(Build.SourcesDirectory)/Multi_Domain_Analytics.Report/report.json"
+        
+        $bim = Get-Content -Raw -Path "$(Build.SourcesDirectory)/Multi_Domain_Analytics.Dataset/model.bim" | ConvertFrom-Json
+        Write-Host "Model Name: $($bim.name)"
+        Write-Host "Compatibility Level: $($bim.compatibilityLevel)"
+      displayName: 'Verify Model Files'
+
+# -----------------------------------------------------------------------------
+# STAGE 2: DEPLOY TO DEV WORKSPACE
+# -----------------------------------------------------------------------------
+- stage: DeployToDEV
+  displayName: '2. Deploy to Development Environment'
+  dependsOn: BuildAndValidate
+  condition: succeeded()
+  jobs:
+  - deployment: DeployDevJob
+    displayName: 'Publish to [DEV] Multi-Domain Analytics'
+    environment: 'PowerBI-Development'
+    pool:
+      vmImage: 'windows-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - powershell: |
+              .\09_Deployment\Deploy_To_PowerBI_Service.ps1 `
+                -Environment "DEV" `
+                -AuthMode "ServicePrincipal" `
+                -TenantId "$(PowerBI-TenantId)" `
+                -ClientId "$(PowerBI-ClientId)" `
+                -ClientSecret "$(PowerBI-ClientSecret)"
+            displayName: 'Execute DEV Deployment'
+
+# -----------------------------------------------------------------------------
+# STAGE 3: DEPLOY TO TEST (UAT)
+# -----------------------------------------------------------------------------
+- stage: DeployToTEST
+  displayName: '3. Deploy to Test / UAT Environment'
+  dependsOn: DeployToDEV
+  condition: succeeded()
+  jobs:
+  - deployment: DeployTestJob
+    displayName: 'Publish to [TEST] Multi-Domain Analytics'
+    environment: 'PowerBI-Test'
+    pool:
+      vmImage: 'windows-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - powershell: |
+              .\09_Deployment\Deploy_To_PowerBI_Service.ps1 `
+                -Environment "TEST" `
+                -AuthMode "ServicePrincipal" `
+                -TenantId "$(PowerBI-TenantId)" `
+                -ClientId "$(PowerBI-ClientId)" `
+                -ClientSecret "$(PowerBI-ClientSecret)"
+            displayName: 'Execute TEST Deployment'
+
+# -----------------------------------------------------------------------------
+# STAGE 4: DEPLOY TO PRODUCTION (Requires Business Approval)
+# -----------------------------------------------------------------------------
+- stage: DeployToPROD
+  displayName: '4. Deploy to Production Environment'
+  dependsOn: DeployToTEST
+  condition: succeeded()
+  jobs:
+  - deployment: DeployProdJob
+    displayName: 'Publish to [PROD] Multi-Domain Analytics'
+    environment: 'PowerBI-Production' # Configured with pre-deployment approval checks in Azure DevOps
+    pool:
+      vmImage: 'windows-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - powershell: |
+              .\09_Deployment\Deploy_To_PowerBI_Service.ps1 `
+                -Environment "PROD" `
+                -AuthMode "ServicePrincipal" `
+                -TenantId "$(PowerBI-TenantId)" `
+                -ClientId "$(PowerBI-ClientId)" `
+                -ClientSecret "$(PowerBI-ClientSecret)"
+            displayName: 'Execute PROD Deployment'
+

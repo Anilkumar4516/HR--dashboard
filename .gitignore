@@ -1,0 +1,11 @@
+# Power BI Temporary files
+*.tmp
+*.log
+~*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Power BI local cache / user settings
+*.pbix.temp
+Multi_Domain_Analytics.Report/.pbi/
