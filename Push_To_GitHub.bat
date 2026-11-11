@@ -3,7 +3,7 @@ title Push Power BI Project to GitHub
 color 0b
 echo ==========================================================
 echo        PUSHING POWER BI SUITE TO GITHUB REPOSITORY
-echo  Target: https://github.com/Anilkumar4516/Dashboard.git
+echo  Target: https://github.com/Anilkumar4516/HR--dashboard.git
 echo ==========================================================
 echo.
 
@@ -26,7 +26,7 @@ if %ERRORLEVEL% EQU 0 (
     echo.
     echo ==========================================================
     echo [SUCCESS] All files successfully pushed to GitHub!
-    echo Visit: https://github.com/Anilkumar4516/Dashboard
+    echo Visit: https://github.com/Anilkumar4516/HR--dashboard
     echo ==========================================================
 ) else (
     echo.
